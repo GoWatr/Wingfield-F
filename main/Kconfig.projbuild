@@ -1,0 +1,122 @@
+menu "Example Configuration"
+
+	menu "FlowMeter Settings"
+   
+    	config FLOW_METER_ID
+            string "FLOW METER ID"
+            default "GWFMBH0001"
+
+    	config JSON_URL
+            string "JSON URL"
+            default "http://www.gowatr.com/wms/flowmeter_ota_files/json_files/GWFMBH0154.json"
+
+		config DOOR_NO
+            string "DOOR NO"
+            default "2A"
+
+		config VS_FETCH_URL
+            string "VS FETCH URL"
+			default "https://www.gowatr.com/wms/getdata/wingfield_getval.php?door_no=2A"
+
+	endmenu
+
+
+	menu "Wifi Settings"
+   
+    	config ESP_WIFI_SSID
+            string "WiFi SSID"
+            default "myssid"
+            help
+                SSID (network name) for the example to connect to.
+
+    	config ESP_WIFI_PASSWORD
+            string "WiFi Password"
+            default "mypassword"
+            help
+                WiFi password (WPA or WPA2) for the example to use.
+
+    	config ESP_MAXIMUM_RETRY
+            int "Maximum retry"
+            default 5
+            help
+    	    	Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+
+	endmenu
+
+	menu "Device Settings"
+
+	config GPIO_RANGE_MAX
+		int
+		default 33 if IDF_TARGET_ESP32
+		default 46 if IDF_TARGET_ESP32S2
+		default 48 if IDF_TARGET_ESP32S3
+		default 18 if IDF_TARGET_ESP32C2
+		default 19 if IDF_TARGET_ESP32C3
+
+	endmenu
+
+	menu "SPI Settings"
+	
+	config MISO_GPIO
+		int "MISO GPIO number"
+		range 0 GPIO_RANGE_MAX
+		default 19 if IDF_TARGET_ESP32
+		default 33 if IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+		default  4 if IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32C2
+		help
+			GPIO number (IOxx) to SPI MISO.
+			Some GPIOs are used for other purposes (flash connections, etc.) and cannot be used to MISO.
+
+
+	config SCLK_GPIO
+		int "SCLK GPIO number"
+		range 0 GPIO_RANGE_MAX
+		default 18 if IDF_TARGET_ESP32
+		default 36 if IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+		default  5 if IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32C2
+		help
+			GPIO number (IOxx) to SPI SCLK.
+			Some GPIOs are used for other purposes (flash connections, etc.) and cannot be used to DC.
+			GPIOs 35-39 are input-only so cannot be used as outputs.
+
+	config MOSI_GPIO
+		int "MOSI GPIO number"
+		range 0 GPIO_RANGE_MAX
+		default 23 if IDF_TARGET_ESP32
+		default 35 if IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+		default  6 if IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32C2
+		help
+			GPIO number (IOxx) to SPI MOSI.
+			Some GPIOs are used for other purposes (flash connections, etc.) and cannot be used to DC.
+			GPIOs 35-39 are input-only so cannot be used as outputs.
+
+	config CS_GPIO
+		int "CS GPIO number"
+		range 0 GPIO_RANGE_MAX
+		default  5 if IDF_TARGET_ESP32
+		default 34 if IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+		default  7 if IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32C2
+		help
+			GPIO number (IOxx) to SPI CS.
+			When it is -1, CS isn't performed.
+			Some GPIOs are used for other purposes (flash connections, etc.) and cannot be used to CS.
+			GPIOs 35-39 are input-only so cannot be used as outputs.
+
+	choice SPI_HOST
+		prompt "SPI peripheral that controls this bus"
+		default SPI2_HOST
+		help
+			Select SPI peripheral that controls this bus.
+		config SPI2_HOST
+			bool "SPI2_HOST"
+			help
+				Use SPI2_HOST. This is also called HSPI_HOST.
+		config SPI3_HOST
+			depends on IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+			bool "SPI3_HOST"
+			help
+				USE SPI3_HOST. This is also called VSPI_HOST
+	endchoice
+
+	endmenu
+endmenu
